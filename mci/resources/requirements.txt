@@ -1,2 +1,4 @@
 magento_adapter==0.2.0
 requests==2.10.0
+requests[security]
+
