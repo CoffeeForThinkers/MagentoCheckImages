@@ -1,1 +1,7 @@
 magento_check_images.egg-info
+*.pyc
+/bin
+/include
+/local
+/lib
+
