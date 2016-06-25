@@ -37,21 +37,14 @@ def _main():
 
     output_filepath = args.filepath
 
-    i = mci.images.Images()
-
-    bad = i.bad_images_gen()
-    bad = list(bad)
-
-    _LOGGER.info("(%d) bad images found.", len(bad))
-
-    if not bad:
-        print("No bad images found.")
-        return
-
     if os.path.exists(output_filepath) is True:
         print("Output file already exists: {}".format(output_filepath))
         sys.exit(1)
 
+    i = mci.images.Images()
+    bad = i.bad_images_gen()
+
+    n = 0
     with open(output_filepath, 'w') as f:
         for info in bad:
             (id_, sku, image) = info
@@ -59,5 +52,10 @@ def _main():
             json.dump(info, f)
             print("BAD: ({}) [{}] [{}]".format(id_, sku, image['label']))
 
+            n += 1
+
+    print("({}) bad images found.".format(n))
+
 if __name__ == '__main__':
     _main()
+
