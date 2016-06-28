@@ -1,5 +1,6 @@
 import logging
 import requests
+import collections
 
 import ma.api.product
 import ma.api.media
@@ -51,3 +52,58 @@ class Images(object):
                     yield (s, i, image)
 
             p.tick()
+
+    def duplicate_images_gen(self):
+        pa = ma.api.product.ProductApi()
+        ma_ = ma.api.media.MediaApi()
+
+        _LOGGER.info("Reading products.")
+        products = pa.get_list()
+        products = list(products)
+        product_len = len(products)
+
+        p = mci.progress.Progress(
+                product_len, 
+                mci.config.images.PROGRESS_INTERVAL_S)
+
+        duplicates = collections.defaultdict(list)
+        for pi, product in enumerate(products):
+            s = product['sku']
+            i = product['product_id']
+
+            _LOGGER.debug("Reading images for product (%d/%d): (%d) [%s]", 
+                          pi + 1, product_len, i, s)
+
+            images = ma_.get_list_with_product_id(i)
+            images = \
+                sorted(
+                    images, 
+                    key=lambda image: (
+                        image['position'], 
+                        image['file']))
+
+            image_len = len(images)
+
+            tracker = {}
+            for image in images:
+                try:
+                    tracker[image['label']]
+                except KeyError:
+                    tracker[image['label']] = image
+                else:
+                    yield (i, s, image, tracker[image['label']])
+
+            p.tick()
+
+    def remove_duplicates(self, duplicates_gen):
+        ma_ = ma.api.media.MediaApi()
+
+        first_sku = None
+        for i, s, image, kept in duplicates_gen:
+            if first_sku is not None and s != first_sku:
+                break
+
+            _LOGGER.info("Removing duplicate image with file-path [%s] from product [%s].", image['file'], s)
+            ma_.remove_with_sku(s, image['file'])
+
+            first_sku = s

@@ -20,7 +20,7 @@ import mci.images
 _LOGGER = logging.getLogger(__name__)
 
 def _get_args():
-    description = "Write a list of bad-images to a file."
+    description = "Write a list of duplicate-images to a file."
     parser = argparse.ArgumentParser(description=description)
 
     parser.add_argument(
@@ -42,22 +42,22 @@ def _main():
         sys.exit(1)
 
     i = mci.images.Images()
-    bad = i.bad_images_gen()
+    duplicates = i.duplicate_images_gen()
 
     n = 0
     with open(output_filepath, 'w') as f:
-        for info in bad:
-            (id_, sku, image) = info
+        for info in duplicates:
+            (id_, sku, image, kept_image) = info
 
             json.dump(info, f)
-            print("BAD: ({}) [{}] [{}]".format(id_, sku, image['label']))
+            print("DUPLICATE: ({}) [{}] [{}] KEEP=[{}]".format(
+                  id_, sku, image['file'], kept_image['file']))
 
             f.write("\n")
 
             n += 1
 
-    print("({}) bad images found.".format(n))
+    print("({}) duplicate images found.".format(n))
 
 if __name__ == '__main__':
     _main()
-

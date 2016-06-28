@@ -36,5 +36,7 @@ setuptools.setup(
     },
     scripts=[
         'mci/resources/scripts/mci_check_images',
+        'mci/resources/scripts/mci_find_duplicates',
+        'mci/resources/scripts/mci_remove_duplicates',
     ],
 )
