@@ -12,6 +12,12 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class Images(object):
+    def images_gen(self, product_id):
+        ma_ = ma.api.media.MediaApi()
+        images = ma_.get_list_with_product_id(i)
+
+        return images
+
     def bad_images_gen(self):
         pa = ma.api.product.ProductApi()
         ma_ = ma.api.media.MediaApi()
