@@ -47,7 +47,7 @@ def _main():
     n = 0
     with open(output_filepath, 'w') as f:
         for info in duplicates:
-            (id_, sku, image, kept_image) = info
+            (id_, sku, image, (kept_image,)) = info
 
             json.dump(info, f)
             print("DUPLICATE: ({}) [{}] [{}] KEEP=[{}]".format(

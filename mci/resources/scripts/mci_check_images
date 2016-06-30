@@ -47,7 +47,7 @@ def _main():
     n = 0
     with open(output_filepath, 'w') as f:
         for info in bad:
-            (id_, sku, image) = info
+            (id_, sku, image, _) = info
 
             json.dump(info, f)
             print("BAD: ({}) [{}] [{}]".format(id_, sku, image['label']))

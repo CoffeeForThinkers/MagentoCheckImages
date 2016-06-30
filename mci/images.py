@@ -14,7 +14,7 @@ _LOGGER = logging.getLogger(__name__)
 class Images(object):
     def images_gen(self, product_id):
         ma_ = ma.api.media.MediaApi()
-        images = ma_.get_list_with_product_id(i)
+        images = ma_.get_list_with_product_id(product_id)
 
         return images
 
@@ -51,11 +51,11 @@ class Images(object):
 
                 try:
                     r.raise_for_status()
-                except requests.HttpError:
+                except requests.HTTPError:
                     _LOGGER.warning("Not found: (%d) [%s] [%s]", 
                                     i, s, image['label'])
 
-                    yield (s, i, image)
+                    yield (i, s, image, ())
 
             p.tick()
 
@@ -97,19 +97,14 @@ class Images(object):
                 except KeyError:
                     tracker[image['label']] = image
                 else:
-                    yield (i, s, image, tracker[image['label']])
+                    yield (i, s, image, (tracker[image['label']],))
 
             p.tick()
 
-    def remove_duplicates(self, duplicates_gen):
+    def remove(self, results_gen):
         ma_ = ma.api.media.MediaApi()
 
-        first_sku = None
-        for i, s, image, kept in duplicates_gen:
-            if first_sku is not None and s != first_sku:
-                break
-
-            _LOGGER.info("Removing duplicate image with file-path [%s] from product [%s].", image['file'], s)
+        for i, s, image, _ in results_gen:
+            _LOGGER.info("Removing image with file-path [%s] from product [%s].", image['file'], s)
             ma_.remove_with_sku(s, image['file'])
 
-            first_sku = s

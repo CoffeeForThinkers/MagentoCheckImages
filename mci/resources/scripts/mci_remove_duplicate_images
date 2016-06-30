@@ -23,9 +23,8 @@ def _main():
     mci.config.log.configure(True)
 
     i = mci.images.Images()
-
     duplicates = i.duplicate_images_gen()
-    i.remove_duplicates(duplicates)
+    i.remove(duplicates)
 
 if __name__ == '__main__':
     _main()
