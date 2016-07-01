@@ -45,9 +45,9 @@ def _main():
     if not images:
         print("No images found.")
     else:
-        distilled = [(i + 1, image['label'], image['url']) for i, image in enumerate(images)]
+        distilled = [(i + 1, image['label'], image['url'], image['position'], image['types']) for i, image in enumerate(images)]
 
-        headers = ['', 'Label', 'URL']
+        headers = ['', 'Label', 'URL', 'position', 'types']
         print(tabulate.tabulate(distilled, headers=headers))
         print('')
 
